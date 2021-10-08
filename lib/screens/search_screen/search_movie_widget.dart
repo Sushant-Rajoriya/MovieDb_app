@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class MovieWidget extends StatelessWidget {
+class SearchMovieWidget extends StatelessWidget {
   final String imagePath;
   final String movieName;
   final String rating;
   final String deckP;
 
-  const MovieWidget(
+  const SearchMovieWidget(
       {Key? key,
       required this.imagePath,
       required this.movieName,
@@ -40,16 +40,16 @@ class MovieWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15.0),
                 child: Image.network(
                   imagePath,
-                  height: 220.0,
-                  width: 140.0,
+                  height: 150.0,
+                  width: 100.0,
                 ),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Container(
-                    width: 210,
+                    width: 180,
                     child: Text(
                       movieName,
                       style: GoogleFonts.lato(
@@ -60,9 +60,6 @@ class MovieWidget extends StatelessWidget {
                       ),
                       maxLines: 3,
                     ),
-                  ),
-                  SizedBox(
-                    height: 20,
                   ),
                   Container(
                     width: 210,
@@ -78,9 +75,6 @@ class MovieWidget extends StatelessWidget {
                         maxLines: 3,
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 25,
                   ),
                   Container(
                     width: 150,

@@ -1,10 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 import 'package:movie_db_app/my_tmdb_api/keys.dart';
 import 'package:movie_db_app/screens/home_screen/my_widgets/movie_widget.dart';
 import 'package:movie_db_app/screens/home_screen/my_widgets/top_bar.dart';
 import 'package:movie_db_app/screens/movie_details/movie_details_screen.dart';
-import 'package:tmdb_api/tmdb_api.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -15,15 +17,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List trendingMovies = [];
-  late TMDB tmDbWithLogsConfig;
+  // late TMDB tmDbWithLogsConfig;
   @override
   void initState() {
     loadMovie();
     super.initState();
   }
 
-  loadMovie() async {
-    tmDbWithLogsConfig = TMDB(
+  Future<void> loadMovie() async {
+    /* tmDbWithLogsConfig = TMDB(
       ApiKeys(Keys.apiKey, Keys.readAccessToken),
       logConfig: ConfigLogger(
         showLogs: true,
@@ -33,9 +35,13 @@ class _HomeScreenState extends State<HomeScreen> {
     Map trendingResult = await tmDbWithLogsConfig.v3.trending.getTrending();
     Map trendingResult1 =
         await tmDbWithLogsConfig.v3.search.queryMovies("Free Guy");
-    print(trendingResult1);
+    // print(trendingResult1);
+*/
+    var trendingResult = await http.get(
+      Uri.parse('${Keys.tmDbBasicPath}trending/all/day?api_key=${Keys.apiKey}'),
+    );
     setState(() {
-      trendingMovies = trendingResult['results'];
+      trendingMovies = json.decode(trendingResult.body)['results'];
     });
   }
 
