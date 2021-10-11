@@ -9,7 +9,8 @@ import 'package:movie_db_app/screens/home_screen/my_widgets/top_bar.dart';
 import 'package:movie_db_app/screens/movie_details/movie_details_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  final String userName;
+  HomeScreen({Key? key, required this.userName}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -48,12 +49,57 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blueAccent,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.userName,
+                    style: GoogleFonts.lato(
+                      textStyle: TextStyle(
+                          color: Colors.white, letterSpacing: .5, fontSize: 30),
+                    ),
+                  ),
+                  Text(
+                    "Edit Profile",
+                    style: GoogleFonts.lato(
+                      textStyle: TextStyle(
+                          color: Colors.white, letterSpacing: .5, fontSize: 25),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              title: Text(
+                'Logout',
+                style: GoogleFonts.lato(
+                  textStyle: TextStyle(
+                      color: Colors.black, letterSpacing: .5, fontSize: 20),
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
       backgroundColor: Colors.white10,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TopBar(name: "Shaan"),
+            TopBar(name: widget.userName),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Center(

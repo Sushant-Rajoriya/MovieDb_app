@@ -1,15 +1,43 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
+import 'package:movie_db_app/model/user_table.dart';
 import 'package:movie_db_app/screens/home_screen/home_screen.dart';
+import 'package:movie_db_app/screens/login_signup/signup.dart';
 
 import 'my_text_field.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool isError = false;
+  HashMap<String, String> hs = new HashMap<String, String>();
+  Future<void> loadList() async {
+    var box = await Hive.openBox<UserTable>('userTable');
+
+    for (int i = 0; i < box.length; i++) {
+      hs.putIfAbsent(box.getAt(i)!.userName, () => box.getAt(i)!.password);
+    }
+  }
+
+  @override
+  void initState() {
+    loadList();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    String userName = "";
+    String password = "";
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -27,9 +55,9 @@ class LoginScreen extends StatelessWidget {
               ),
               SizedBox(height: 12),
               Text(
-                "Welcome Back !",
+                isError ? "Error UserName Or Password Wrong" : "Welcome Back !",
                 style: GoogleFonts.lato(
-                  color: Colors.black,
+                  color: isError ? Colors.red : Colors.black,
                   textStyle: TextStyle(letterSpacing: .5, fontSize: 35),
                 ),
               ),
@@ -59,12 +87,40 @@ class LoginScreen extends StatelessWidget {
                             SizedBox(
                               height: 25,
                             ),
-                            MyTextField(labelText: 'User Name'),
-                            MyTextField(labelText: 'Password'),
+                            MyTextField(
+                              labelText: 'User Name',
+                              keyboardType: TextInputType.text,
+                              isPassword: false,
+                              onChanged: (value) {
+                                userName = value;
+                              },
+                            ),
+                            MyTextField(
+                              labelText: 'Password',
+                              keyboardType: TextInputType.text,
+                              isPassword: true,
+                              onChanged: (value) {
+                                password = value;
+                              },
+                            ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => HomeScreen()));
+                                print(hs);
+                                if (hs.containsKey(userName)) {
+                                  if (hs[userName] == password)
+                                    setState(() {
+                                      isError = false;
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) => HomeScreen(
+                                                    userName: userName,
+                                                  )));
+                                    });
+                                } else {
+                                  setState(() {
+                                    isError = true;
+                                  });
+                                }
                               },
                               child: CircleAvatar(
                                 backgroundColor: Colors.white,
@@ -82,6 +138,19 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => SignupScreen()));
+                },
+                child: Text(
+                  "Sing Up",
+                  style: GoogleFonts.lato(
+                    color: Colors.blueAccent,
+                    textStyle: TextStyle(letterSpacing: .5, fontSize: 20),
+                  ),
+                ),
+              )
             ],
           ),
         ),
